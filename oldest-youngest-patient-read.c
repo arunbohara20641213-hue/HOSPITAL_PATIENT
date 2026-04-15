@@ -54,11 +54,16 @@ int main()
         {
             printf("Oldest patient with age %d: %s\n", hpp[i].age, hpp[i].name);
         }
+    }
+
+    for(i=0; i<24; i++)
+    {
         if(youngest_age==hpp[i].age)
         {
             printf("Youngest patient with age %d: %s\n", hpp[i].age, hpp[i].name);
         }
     }
+
     fclose(fp);
     return 0;
 }
