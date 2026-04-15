@@ -21,8 +21,4 @@ Shreesha 20 Dhangadhi Moderate SurgicalWard
 Sonish 21 Kathmandu Normal GeneralWard
 Subham 18 Lalitpur Critical ICUWard
 Surakshya 19 Chitwan Normal MaternityWard
-<<<<<<< HEAD
-Tanchhohang 22 Ilam Moderate NeuroWard
-=======
-Tanchhohang 22 Ilam Moderate NeuroWard
->>>>>>> d1328790fd949daead6d9c0b0cfcbe7e7d861650
+Tanchho 22 Ilam Moderate NeuroWard
