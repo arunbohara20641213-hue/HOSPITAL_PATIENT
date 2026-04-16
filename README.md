@@ -216,9 +216,9 @@ chmod +x hosp_write hosp_read hosp_age_analysis hosp_critical hosp_ward_count
 ---
 ## Project History
 
-**Original Author**: [@kabircsit25](https://github.com/kabircsit25/HOSPITAL_PATIENT)
+**Original Author**: [@kabircsit25](https://github.com/kabircsit25)
 
-**New Features & Updates**: [@arunbohara20641213-hue](https://github.com/arunbohara20641213-hue)
+**contributor**: [@arunbohara20641213-hue](https://github.com/arunbohara20641213-hue)
 
 ### Changes in This Version
 - ✅ Added age analysis module (oldest/youngest patient)
@@ -227,10 +227,6 @@ chmod +x hosp_write hosp_read hosp_age_analysis hosp_critical hosp_ward_count
 - 📝 Improved documentation and usage examples
 - 📝 Added feature summary table
 - 📝 Added troubleshooting section
-
----
-## License
-[Specify your license here, e.g., MIT, GPL, etc.]
 
 ---
 ## Contributing
