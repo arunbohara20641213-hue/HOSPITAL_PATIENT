@@ -83,5 +83,3 @@ int main()
     fclose(fp); // Close AFTER all file operations are done
     return 0;
 }
-
-//hosp_read.c
