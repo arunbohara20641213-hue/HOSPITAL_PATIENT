@@ -22,11 +22,17 @@ int main()
         return 1;
     }
 
+    printf("========================================\n");
+    printf("   HOSPITAL PATIENT DATA ENTRY SYSTEM   \n");
+    printf("========================================\n");
+
     printf("Enter details of 24 patients (NO spaces in input)\n");
 
     for(i = 0; i < 24; i++)
     {
-        printf("\nPatient %d\n", i + 1);
+        printf("\n----------------------------------------\n");
+        printf("Patient %d\n", i + 1);
+        printf("----------------------------------------\n");
 
         printf("Name: ");
         scanf("%s", hpp.name);
@@ -48,7 +54,9 @@ int main()
                 hpp.condition, hpp.ward);
     }
 
-    printf("\nData saved successfully to hospital.txt\n");
+    printf("\n========================================\n");
+    printf("Data saved successfully to hospital.txt\n");
+    printf("========================================\n");
 
     fclose(fp);
     return 0;
