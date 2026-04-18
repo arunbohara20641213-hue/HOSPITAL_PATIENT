@@ -178,7 +178,7 @@ int main()
         return 1;
     }
  
-    hospitalPatientCount(fp);
+    hospitalPatientCount();
 
     fclose(fp); // Close AFTER all file operations are done
     return 0;
