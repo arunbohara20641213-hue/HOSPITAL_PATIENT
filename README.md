@@ -128,4 +128,6 @@ hosp_read.exe
 ## Authors
 
 - [@arunbohara20641213-hue](https://github.com/arunbohara20641213-hue)
-- Forked from [@kabircsit25](https://github.com/kabircsit25/HOSPITAL_PATIENT)
+- [@kabircsit25](https://github.com/kabircsit25/HOSPITAL_PATIENT)
+- [@bikashcsit222](https://github.com/bikashcsit222)
+- [@ankitcsit25](https://github.com/ankitcsit25)
