@@ -1,60 +1,54 @@
 
 #include <stdio.h>
 #include <string.h>
-struct hosp_read
-{
-    char name[50];
-    int age;
-    char address[50];
-    char condition[50];
-    char ward_name[50];
-}hpp;
+#include "hosp_common.h"
+hosp_read hpp;
 int hospitalPatientCount()
 {
     int i, w1 = 0, w2 = 0, w3 = 0, w4 = 0, w5 = 0, w6 = 0, w7 = 0, w8 = 0, w9 = 0, w10 = 0;
-    struct hosp_read hpp[24];
+    hosp_read hpp[24];
      FILE *fp;
     fp = fopen("hospital.txt", "r");
     for (i = 0; i < 24; i++)
     {
-        fscanf(fp, "%s %d %s %s %s", &hpp[i].name, &hpp[i].age, &hpp[i].address, &hpp[i].condition, &hpp[i].ward_name);
-        if (strcmp(hpp[i].ward_name, "GynoWard") == 0)
+        fscanf(fp, "%s %d %s %s %s", &hpp[i].name, &hpp[i].age, &hpp[i].address, &hpp[i].condition, &hpp[i].ward);
+        if (strcmp(hpp[i].ward, "GynoWard") == 0)
         {
             w1++;
         }
-        else if (strcmp(hpp[i].ward_name, "OrthoWard") == 0)
+        else if (strcmp(hpp[i].ward, "OrthoWard") == 0)
         {
             w2++;
         }
-        else if (strcmp(hpp[i].ward_name, "CardioWard") == 0)
+        else if (strcmp(hpp[i].ward, "CardioWard") == 0)
         {
             w3++;
         }
-        else if (strcmp(hpp[i].ward_name, "NeuroWard") == 0)
+        else if (strcmp(hpp[i].ward, "NeuroWard") == 0)
         {
             w4++;
         }
-        else if (strcmp(hpp[i].ward_name, "PediatricWard") == 0)
+        else if (strcmp(hpp[i].ward, "PediatricWard") == 0)
         {
             w5++;
         }
-        else if (strcmp(hpp[i].ward_name, "EmergencyWard") == 0)
+        else if (strcmp(hpp[i].ward, "EmergencyWard") == 0)
         {
             w6++;
         }
-        else if (strcmp(hpp[i].ward_name, "ICUWard") == 0)
+        else if (strcmp(hpp[i].ward, "ICUWard") == 0)
         {
             w7++;
         }
-        else if (strcmp(hpp[i].ward_name, "SurgicalWard") == 0)
+        else if (strcmp(hpp[i].ward, "SurgicalWard") == 0)
         {
             w8++;
         }
-        else if (strcmp(hpp[i].ward_name, "GeneralWard") == 0)
+        else if (strcmp(hpp[i].ward, "GeneralWard") == 0)
         {
             w9++;
         }
-        else if (strcmp(hpp[i].ward_name, "MaternityWard") == 0)
+        else if (strcmp(hpp[i].ward, "MaternityWard") == 0)
         {
             w10++;
         }
@@ -167,7 +161,7 @@ int main()
 
     int i;
     FILE *fp;
-    struct hosp_read hpp;
+    hosp_read hpp;
     
     //Damn this is mine path 
 

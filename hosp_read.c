@@ -1,13 +1,6 @@
 #include<stdio.h>
 #include<string.h>
-struct hosp_write
-{
-    char name[20];
-    int age;
-    char address[50];
-    char condition[100];
-    char ward[20];
-};
+#include "hosp_common.h"
 
 //Kathmandu patients by Arun -1
 
