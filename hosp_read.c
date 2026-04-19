@@ -8,71 +8,101 @@ void displayKathmanduPatients()
 {
     struct hosp_write hpp;
     FILE *fp;
-    fp = fopen("hospital.txt", "r");
     int count = 0;
-    char searchCity[20];
+    int corrupt_count = 0;
+    int lines_read = 0;
+    char searchCity[HOSP_ADDRESS_LEN];
+
+    fp = fopen("hospital.txt", "r");
+    if(fp == NULL)
+    {
+        printf("Error opening file!\n");
+        return;
+    }
+
     printf("\nEnter city to filter: ");
-    scanf("%s", searchCity);
+    scanf("%49s", searchCity);
     printf("\n\nPatients from %s:\n", searchCity);
     printf("Name \t Age \t Address \t Condition \t Ward\n");
-    rewind(fp);
-    for(int i = 0; i < 24; i++)
+
+    while (hosp_read_next_valid_record(fp, &hpp, &corrupt_count, &lines_read))
     {
-        if(fscanf(fp, "%s %d %s %s %s", hpp.name, &hpp.age, hpp.address, hpp.condition, hpp.ward) != 5)
-            break; // Stop if reading fails
         if(strstr(hpp.address, searchCity) != NULL)
         {
             printf("%s\t%d\t%s\t%s\t%s\n", hpp.name, hpp.age, hpp.address, hpp.condition, hpp.ward);
             count++;
         }
     }
+
     if(count == 0)
+    {
         printf("No patients found from %s.\n", searchCity);
-        printf("\nTotal patients from %s: %d\n", searchCity, count);
+    }
+    printf("\nTotal patients from %s: %d\n", searchCity, count);
+
+    if (corrupt_count > 0)
+    {
+        printf("Skipped corrupt/invalid records: %d (lines scanned: %d)\n", corrupt_count, lines_read);
+    }
+
+    fclose(fp);
 }
 
 //Age by Ankit -2
 
 void hospitalage()
 {
-    struct hosp_write hpp[24];
+    struct hosp_write hpp[HOSP_MAX_PATIENTS];
     FILE *fp;
+    int valid_count = 0;
+    int corrupt_count = 0;
+    int lines_read = 0;
     int i;
+
     fp = fopen("hospital.txt", "r");
     if (fp == NULL)
     {
-        printf("Unable to find file");
+        printf("Unable to find file\n");
+        return;
     }
-    else
+
+    while (valid_count < HOSP_MAX_PATIENTS &&
+           hosp_read_next_valid_record(fp, &hpp[valid_count], &corrupt_count, &lines_read))
     {
-        for (i = 0; i < 24; i++)
-        { // Copying whole line from the file
-            fscanf(fp, "%s %d %s %s %s", &hpp[i].name, &hpp[i].age, &hpp[i].address, &hpp[i].condition, &hpp[i].ward);
+        valid_count++;
+    }
+
+    fclose(fp);
+
+    if (valid_count == 0)
+    {
+        printf("No valid patient records found.\n");
+        if (corrupt_count > 0)
+        {
+            printf("Skipped corrupt/invalid records: %d (lines scanned: %d)\n", corrupt_count, lines_read);
         }
+        return;
     }
 
     int oldest_age = hpp[0].age;
     int youngest_age = hpp[0].age;
-    int oldest_age_index = 0;
-    int youngest_age_index = 0;
+
     // Comparing & replacing the oldest and youngest age
-    for (i = 0; i < 24; i++)
+    for (i = 0; i < valid_count; i++)
     {
         if (oldest_age < hpp[i].age)
         {
             oldest_age = hpp[i].age;
-            oldest_age_index = i;
         }
         if (youngest_age > hpp[i].age)
         {
             youngest_age = hpp[i].age;
-            youngest_age_index = i;
         }
     }
 
      // dispalying the oldest and youngest age
     printf("Oldest age patients detail:\n");
-    for (i = 0; i < 24; i++)
+    for (i = 0; i < valid_count; i++)
     {
         if (oldest_age == hpp[i].age)
         {
@@ -81,7 +111,7 @@ void hospitalage()
     }
     printf("\n");
     printf("Youngest age patients detail:\n");
-    for (i = 0; i < 24; i++)
+    for (i = 0; i < valid_count; i++)
     {
         if (youngest_age == hpp[i].age)
         {
@@ -89,22 +119,28 @@ void hospitalage()
         }
     }
 
-    fclose(fp);
+    if (corrupt_count > 0)
+    {
+        printf("\nSkipped corrupt/invalid records: %d (lines scanned: %d)\n", corrupt_count, lines_read);
+    }
 }
 
 //Patient critical condition by Bikash -3
 
 void hospitalcondition()
 {
-    int i;
-    struct hosp_write hpp[24];
+    struct hosp_write hpp;
     FILE *fp;
+    int corrupt_count = 0;
+    int lines_read = 0;
+
     fp = fopen("hospital.txt", "r");
     if(fp == NULL)
     {
         printf("Error opening file!\n");
-    
+        return;
     }
+
     printf("\nPatients with Critical Condition:\n\n");
     // Top border
     printf("+----------------+-----+----------------+----------------+---------------+\n");
@@ -113,29 +149,28 @@ void hospitalcondition()
            "Name", "Age", "Address", "Condition", "Ward");
     // Separator
     printf("+----------------+-----+----------------+----------------+---------------+\n");
-    for(i = 0; i < 24; i++)
+
+    while (hosp_read_next_valid_record(fp, &hpp, &corrupt_count, &lines_read))
     {
-        if(fscanf(fp, "%s %d %s %s %s",
-     hpp[i].name,
-     &hpp[i].age,
-      hpp[i].address,
-      hpp[i].condition,
-    hpp[i].ward) != 5)
-        {
-            break;
-        }
-        if(strcmp(hpp[i].condition, "Critical") == 0)
+        if(strcmp(hpp.condition, "Critical") == 0)
         {
             printf("| %-14s | %-3d | %-14s | %-14s | %-13s |\n",
-                   hpp[i].name,
-                   hpp[i].age,
-                   hpp[i].address,
-                   hpp[i].condition,
-                   hpp[i].ward);
+                   hpp.name,
+                   hpp.age,
+                   hpp.address,
+                   hpp.condition,
+                   hpp.ward);
         }
     }
+
     // Bottom border
     printf("+----------------+-----+----------------+----------------+---------------+\n");
+
+    if (corrupt_count > 0)
+    {
+        printf("Skipped corrupt/invalid records: %d (lines scanned: %d)\n", corrupt_count, lines_read);
+    }
+
     fclose(fp);
 
 }
@@ -145,50 +180,58 @@ void hospitalcondition()
 
 int hospitalPatientCount()
 {
-    int i, w1 = 0, w2 = 0, w3 = 0, w4 = 0, w5 = 0, w6 = 0, w7 = 0, w8 = 0, w9 = 0, w10 = 0;
-    struct hosp_write hpp[24];
-     FILE *fp;
+    int w1 = 0, w2 = 0, w3 = 0, w4 = 0, w5 = 0, w6 = 0, w7 = 0, w8 = 0, w9 = 0, w10 = 0;
+    int corrupt_count = 0;
+    int lines_read = 0;
+    struct hosp_write hpp;
+    FILE *fp;
+
     fp = fopen("hospital.txt", "r");
-    for (i = 0; i < 24; i++)
+    if (fp == NULL)
     {
-        fscanf(fp, "%s %d %s %s %s", &hpp[i].name, &hpp[i].age, &hpp[i].address, &hpp[i].condition, &hpp[i].ward);
-        if (strcmp(hpp[i].ward, "GynoWard") == 0)
+        printf("Error opening file!\n");
+        return 1;
+    }
+
+    while (hosp_read_next_valid_record(fp, &hpp, &corrupt_count, &lines_read))
+    {
+        if (strcmp(hpp.ward, "GynoWard") == 0)
         {
             w1++;
         }
-        else if (strcmp(hpp[i].ward, "OrthoWard") == 0)
+        else if (strcmp(hpp.ward, "OrthoWard") == 0)
         {
             w2++;
         }
-        else if (strcmp(hpp[i].ward, "CardioWard") == 0)
+        else if (strcmp(hpp.ward, "CardioWard") == 0)
         {
             w3++;
         }
-        else if (strcmp(hpp[i].ward, "NeuroWard") == 0)
+        else if (strcmp(hpp.ward, "NeuroWard") == 0)
         {
             w4++;
         }
-        else if (strcmp(hpp[i].ward, "PediatricWard") == 0)
+        else if (strcmp(hpp.ward, "PediatricWard") == 0)
         {
             w5++;
         }
-        else if (strcmp(hpp[i].ward, "EmergencyWard") == 0)
+        else if (strcmp(hpp.ward, "EmergencyWard") == 0)
         {
             w6++;
         }
-        else if (strcmp(hpp[i].ward, "ICUWard") == 0)
+        else if (strcmp(hpp.ward, "ICUWard") == 0)
         {
             w7++;
         }
-        else if (strcmp(hpp[i].ward, "SurgicalWard") == 0)
+        else if (strcmp(hpp.ward, "SurgicalWard") == 0)
         {
             w8++;
         }
-        else if (strcmp(hpp[i].ward, "GeneralWard") == 0)
+        else if (strcmp(hpp.ward, "GeneralWard") == 0)
         {
             w9++;
         }
-        else if (strcmp(hpp[i].ward, "MaternityWard") == 0)
+        else if (strcmp(hpp.ward, "MaternityWard") == 0)
         {
             w10++;
         }
@@ -290,6 +333,12 @@ int hospitalPatientCount()
     //         printf("%s \t %d \t %s \t %s \t %s \t %d\n", hpp[i].name, hpp[i].age, hpp[i].address, hpp[i].condition, hpp[i].ward_name, w10);
     //     }
     // }
+
+    if (corrupt_count > 0)
+    {
+        printf("Skipped corrupt/invalid records: %d (lines scanned: %d)\n", corrupt_count, lines_read);
+    }
+
 return 0;
 }
 //The reason behind commit is the qn asked to count the number of patients in each ward but the code gives the full info of the patients in each ward. So I have commented the code which gives the full info of the patients in each ward and added the code which gives only the count of patients in each ward.

@@ -2,6 +2,7 @@
 #define HOSP_COMMON_H
 
 #include <stddef.h>
+#include <stdio.h>
 
 #define HOSP_MAX_PATIENTS 24
 #define HOSP_NAME_LEN 50
@@ -60,5 +61,7 @@ void hosp_attach_integrity(HospitalRecord *record, int version, PatientStatus st
 
 int hosp_parse_legacy_record_line(const char *line, HospitalRecord *out_record);
 int hosp_parse_versioned_record_line(const char *line, HospitalRecord *out_record);
+int hosp_record_integrity_ok(const HospitalRecord *record);
+int hosp_read_next_valid_record(FILE *fp, HospitalRecord *out_record, int *corrupt_count, int *lines_read);
 
 #endif

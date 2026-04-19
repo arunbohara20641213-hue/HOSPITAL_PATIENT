@@ -2,53 +2,61 @@
 #include <stdio.h>
 #include <string.h>
 #include "hosp_common.h"
-hosp_read hpp;
+
 int hospitalPatientCount()
 {
-    int i, w1 = 0, w2 = 0, w3 = 0, w4 = 0, w5 = 0, w6 = 0, w7 = 0, w8 = 0, w9 = 0, w10 = 0;
-    hosp_read hpp[24];
-     FILE *fp;
+    int w1 = 0, w2 = 0, w3 = 0, w4 = 0, w5 = 0, w6 = 0, w7 = 0, w8 = 0, w9 = 0, w10 = 0;
+    int corrupt_count = 0;
+    int lines_read = 0;
+    hosp_read record;
+    FILE *fp;
+
     fp = fopen("hospital.txt", "r");
-    for (i = 0; i < 24; i++)
+    if (fp == NULL)
     {
-        fscanf(fp, "%s %d %s %s %s", &hpp[i].name, &hpp[i].age, &hpp[i].address, &hpp[i].condition, &hpp[i].ward);
-        if (strcmp(hpp[i].ward, "GynoWard") == 0)
+        printf("Error opening file!\n");
+        return 1;
+    }
+
+    while (hosp_read_next_valid_record(fp, &record, &corrupt_count, &lines_read))
+    {
+        if (strcmp(record.ward, "GynoWard") == 0)
         {
             w1++;
         }
-        else if (strcmp(hpp[i].ward, "OrthoWard") == 0)
+        else if (strcmp(record.ward, "OrthoWard") == 0)
         {
             w2++;
         }
-        else if (strcmp(hpp[i].ward, "CardioWard") == 0)
+        else if (strcmp(record.ward, "CardioWard") == 0)
         {
             w3++;
         }
-        else if (strcmp(hpp[i].ward, "NeuroWard") == 0)
+        else if (strcmp(record.ward, "NeuroWard") == 0)
         {
             w4++;
         }
-        else if (strcmp(hpp[i].ward, "PediatricWard") == 0)
+        else if (strcmp(record.ward, "PediatricWard") == 0)
         {
             w5++;
         }
-        else if (strcmp(hpp[i].ward, "EmergencyWard") == 0)
+        else if (strcmp(record.ward, "EmergencyWard") == 0)
         {
             w6++;
         }
-        else if (strcmp(hpp[i].ward, "ICUWard") == 0)
+        else if (strcmp(record.ward, "ICUWard") == 0)
         {
             w7++;
         }
-        else if (strcmp(hpp[i].ward, "SurgicalWard") == 0)
+        else if (strcmp(record.ward, "SurgicalWard") == 0)
         {
             w8++;
         }
-        else if (strcmp(hpp[i].ward, "GeneralWard") == 0)
+        else if (strcmp(record.ward, "GeneralWard") == 0)
         {
             w9++;
         }
-        else if (strcmp(hpp[i].ward, "MaternityWard") == 0)
+        else if (strcmp(record.ward, "MaternityWard") == 0)
         {
             w10++;
         }
@@ -158,22 +166,6 @@ return 0;
 int main()
 
 {
-
-    int i;
-    FILE *fp;
-    hosp_read hpp;
-    
-    //Damn this is mine path 
-
-    fp = fopen("hospital.txt", "r");
-    if(fp == NULL)
-    {
-        printf("Error opening file!");
-        return 1;
-    }
- 
     hospitalPatientCount();
-
-    fclose(fp); // Close AFTER all file operations are done
     return 0;
 }

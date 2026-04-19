@@ -3,45 +3,57 @@
 
 void hospitalage()
 {
-    struct hosp_write hpp[24];
+    struct hosp_write hpp[HOSP_MAX_PATIENTS];
     FILE *fp;
+    int valid_count = 0;
+    int corrupt_count = 0;
+    int lines_read = 0;
     int i;
+
     fp = fopen("hospital.txt", "r");
-    //fp = fopen("./output/hospital.txt", "r");
     if (fp == NULL)
     {
-        printf("Unable to find file");
+        printf("Unable to find file\n");
+        return;
     }
-    else
+
+    while (valid_count < HOSP_MAX_PATIENTS &&
+           hosp_read_next_valid_record(fp, &hpp[valid_count], &corrupt_count, &lines_read))
     {
-        for (i = 0; i < 24; i++)
-        { // Copying whole line from the file
-            fscanf(fp, "%s %d %s %s %s", &hpp[i].name, &hpp[i].age, &hpp[i].address, &hpp[i].condition, &hpp[i].ward);
+        valid_count++;
+    }
+
+    fclose(fp);
+
+    if (valid_count == 0)
+    {
+        printf("No valid patient records found.\n");
+        if (corrupt_count > 0)
+        {
+            printf("Skipped corrupt/invalid records: %d (lines scanned: %d)\n", corrupt_count, lines_read);
         }
+        return;
     }
 
     int oldest_age = hpp[0].age;
     int youngest_age = hpp[0].age;
-    int oldest_age_index = 0;
-    int youngest_age_index = 0;
+
     // Comparing & replacing the oldest and youngest age
-    for (i = 0; i < 24; i++)
+    for (i = 0; i < valid_count; i++)
     {
         if (oldest_age < hpp[i].age)
         {
             oldest_age = hpp[i].age;
-            oldest_age_index = i;
         }
         if (youngest_age > hpp[i].age)
         {
             youngest_age = hpp[i].age;
-            youngest_age_index = i;
         }
     }
 
     // dispalying the oldest and youngest age
     printf("Oldest age patients detail:\n");
-    for (i = 0; i < 24; i++)
+    for (i = 0; i < valid_count; i++)
     {
         if (oldest_age == hpp[i].age)
         {
@@ -50,7 +62,7 @@ void hospitalage()
     }
     printf("\n");
     printf("Youngest age patients detail:\n");
-    for (i = 0; i < 24; i++)
+    for (i = 0; i < valid_count; i++)
     {
         if (youngest_age == hpp[i].age)
         {
@@ -58,27 +70,14 @@ void hospitalage()
         }
     }
 
-    fclose(fp);
+    if (corrupt_count > 0)
+    {
+        printf("\nSkipped corrupt/invalid records: %d (lines scanned: %d)\n", corrupt_count, lines_read);
+    }
 }
 
 int main()
 {
-    FILE *fp;
-    struct hosp_write hpp;
-    //Path to the file is given as per the system, so it may be different for other system. So, change the path according to your system. For example, if you are using linux, then the path will be like this: fp = fopen("/home/user/HOSPITAL_PATIENT/output/hospital.txt", "r");
-
-    //fp = fopen("C:/Users/hp/HOSPITAL_PATIENT/output/hospital.txt", "r");
-
-    //path in main function is not required as the path is already given in the hospitalage function. So, I have commented the path in main function and added the path in hospitalage function. So, you can change the path in hospitalage function according to your system.
-    
-    fp = fopen("hospital.txt", "r");
-    if(fp == NULL)
-    {
-        printf("Error opening file!");
-        return 1;
-    }
     hospitalage();
-
-    fclose(fp); // Close AFTER all file operations are done
     return 0;
 }

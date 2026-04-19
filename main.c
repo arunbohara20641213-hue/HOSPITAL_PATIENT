@@ -111,7 +111,7 @@ static int compile_module(const Module *module)
 
     build_path(source_path, sizeof(source_path), project_root, module->source_name);
     build_path(exe_path, sizeof(exe_path), exe_dir, module->exe_name);
-    snprintf(command, sizeof(command), "gcc \"%s\" -o \"%s\"", source_path, exe_path);
+    snprintf(command, sizeof(command), "gcc \"%s\" \"%s\\hosp_common.c\" -o \"%s\"", source_path, project_root, exe_path);
 
     printf("\nCompiling %s...\n", module->label);
     int result = system(command);

@@ -296,3 +296,77 @@ int hosp_parse_versioned_record_line(const char *line, HospitalRecord *out_recor
     out_record->status = (PatientStatus)status;
     return 1;
 }
+
+int hosp_record_integrity_ok(const HospitalRecord *record)
+{
+    if (record == NULL)
+    {
+        return 0;
+    }
+
+    if (record->record_version != HOSP_RECORD_VERSION_1)
+    {
+        return 0;
+    }
+
+    return record->checksum == hosp_checksum_record_v1(record);
+}
+
+int hosp_read_next_valid_record(FILE *fp, HospitalRecord *out_record, int *corrupt_count, int *lines_read)
+{
+    char line[512];
+
+    if (fp == NULL || out_record == NULL)
+    {
+        return 0;
+    }
+
+    while (fgets(line, sizeof(line), fp) != NULL)
+    {
+        HospitalRecord candidate;
+        int parsed;
+
+        if (lines_read != NULL)
+        {
+            (*lines_read)++;
+        }
+
+        parsed = hosp_parse_versioned_record_line(line, &candidate);
+        if (!parsed)
+        {
+            parsed = hosp_parse_legacy_record_line(line, &candidate);
+        }
+
+        if (!parsed)
+        {
+            if (corrupt_count != NULL)
+            {
+                (*corrupt_count)++;
+            }
+            continue;
+        }
+
+        if (hosp_validate_record(&candidate) != HOSP_VALIDATION_OK)
+        {
+            if (corrupt_count != NULL)
+            {
+                (*corrupt_count)++;
+            }
+            continue;
+        }
+
+        if (!hosp_record_integrity_ok(&candidate))
+        {
+            if (corrupt_count != NULL)
+            {
+                (*corrupt_count)++;
+            }
+            continue;
+        }
+
+        *out_record = candidate;
+        return 1;
+    }
+
+    return 0;
+}
